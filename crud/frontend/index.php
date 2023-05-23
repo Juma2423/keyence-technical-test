@@ -1,139 +1,45 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Pacientes</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/read-excel-file@5.x/bundle/read-excel-file.min.js"></script>
+    <title>CRUD</title>
 </head>
 <body>
-    <div id="appPacientes" class="container">
-        <!-- Formulario para añadir pacientes -->
-        <section class="form">
-            <form action="" class="text-center">
-                <input v-model="nombre" @keyup.enter="crearPaciente" type="text" class="form-control" placeholder="Nombre">
-                <input v-model="edad" @keyup.enter="crearPaciente" type="number" name="edad" placeholder="Edad" class="form-control">
-                <!-- Botón para añadir -->
-                <button id="sheetjsexport"><b>Export as XLSX</b></button>
-            </form>
-        </section>
-        <!-- Tabla donde se muestran los datos -->
-        <section class="data">
-            <caption>Pacientes</caption>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">id</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Edad</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(paciente, index) in pacientes">
-                        <td>{{ paciente.id }}</td>
-                        <td>
-                            <span v-if="formActualizar && idActualizar == index">
-                                <!-- Formulario para actualizar -->
-                                <input v-model="nombreActualizar" type="text" class="form-control">
-                            </span>
-                            <span v-else>
-                                <!-- Dato nombre -->
-                                {{ paciente.nombre }}
-                            </span>
-                        </td>
-                        <td>
-                            <span v-if="formActualizar && idActualizar == index">
-                                <!-- Formulario para actualizar -->
-                                <input v-model="edadActualizar" type="text" class="form-control">
-                            </span>
-                            <span v-else>
-                                <!-- Dato edad -->
-                                {{ paciente.edad }}
-                            </span>
-                        </td>
-                        <td>
-                            <!-- Botón para guardar la información actualizada -->
-                            <span v-if="formActualizar && idActualizar == index">
-                                <button @click="guardarActualizacion(index)" class="btn btn-success">Guardar</button>
-                            </span>
-                            <span v-else>
-                                <!-- Botón para mostrar el formulario de actualizar -->
-                                <button @click="verFormActualizar(index)" class="btn btn-warning">Actualizar</button>
-                                <!-- Botón para borrar -->
-                                <button @click="borrarPaciente(index)" class="btn btn-danger">Borrar</button>
-                            </span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+    <div class="container">
+        <input type="file" name="" id="file/input" required>
     </div>
-    <script>
-        var input = document.getElementById('input')
-        input.addEventListener('change', function() {
-            readXlsxFile(input.files[0]).then(function(rows) {
-            // `rows` is an array of rows
-            // each row being an array of cells.
-    })
-  })
-</script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            new Vue({
-                el: '#appPacientes',
-                data: {
-                    // Input nombre
-                    nombre: '',
-                    // Input edad
-                    edad: '',
-                    // Ver o no ver el formulario de actualizar
-                    formActualizar: false,
-                    // La posición de tu lista donde te gustaría actualizar 
-                    idActualizar: -1,
-                    // Input nombre dentro del formulario de actualizar
-                    nombreActualizar: '',
-                    // Input edad dentro del formulario de actualizar
-                    edadActualizar: '',
-                    // Lista de pacientes
-                    pacientes: [] 
-                },
-                methods: {
-                    crearPaciente: function () {
-                        // Anyadimos a nuestra lista
-                        this.pacientes.push({
-                            id: + new Date(),
-                            nombre: this.nombre,
-                            edad: this.edad
-                        });
-                        // Vaciamos el formulario de añadir
-                        this.nombre = '';
-                        this.edad = '';
-                    },
-                    verFormActualizar: function (paciente_id) {
-                        // Antes de mostrar el formulario de actualizar, rellenamos sus campos
-                        this.idActualizar = paciente_id;
-                        this.nombreActualizar = this.pacientes[paciente_id].nombre;
-                        this.edadActualizar = this.pacientes[paciente_id].edad;
-                        // Mostramos el formulario
-                        this.formActualizar = true;
-                    },
-                    borrarPaciente: function (paciente_id) {
-                        // Borramos de la lista
-                        this.pacientes.splice(paciente_id, 1);
-                    },
-                    guardarActualizacion: function (paciente_id) {
-                        // Ocultamos nuestro formulario de actualizar
-                        this.formActualizar = false;
-                        // Actualizamos los datos
-                        this.pacientes[paciente_id].nombre = this.nombreActualizar;
-                        this.pacientes[paciente_id].edad = this.edadActualizar;
-                    }
-                }
-            });
-        });
-    </script>
+    <table class="table table/bordered" id="excel/table">
+    </table>
+    <template>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Userid</th>
+                <th scope="col">UserName</th>
+                <th scope="col">Date</th>
+                <th scope="col">Punch In</th>
+                <th scope="col">PunchOut</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="row in data">
+                <td>{{ row.userid }}</td>
+                <td>{{ row.username }}</td>
+                <td>{{ row.date }}</td>
+                <td>{{ row.punchIn }}</td>
+                <td>{{ row.punchOut }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </template>
+
+    
 </body>
+<script src="./js/script.js"></script>
+<script src="./js/crud.js"></script>
 </html>
